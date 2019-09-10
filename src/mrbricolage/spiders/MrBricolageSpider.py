@@ -34,9 +34,8 @@ class MrBricolageSpider(scrapy.Spider):
 
             productCharacteristics[characteristicName] = characteristicValue
 
-        availabilityPerShop = self.getAvailibilityPerShop()
-
         imgUrl = response.xpath("//div[contains(concat(' ', normalize-space(@class), ' '), ' owl-carousel-thumbs ')]//img/@src").extract()
+        availabilityPerShop = self.getAvailibilityPerShop()
 
         yield {
             'title': self.convertListItemToStr(response.xpath("//*[contains(@class, 'js-product-name')]/text()").extract()),
@@ -50,7 +49,7 @@ class MrBricolageSpider(scrapy.Spider):
 
         #Let's create the same AJAX call as from the web browser in order to fetch the availability per shop
         #Just copy'n'paste this POST body from the browser's request
-        data = {
+        POSTBody = {
             'locationQuery': '',
             'cartPage': '0',
             'latitude': '42.6641056',
@@ -58,11 +57,10 @@ class MrBricolageSpider(scrapy.Spider):
             'CSRFToken': '06ce5be0-f39f-490c-b56e-9fa2c3967fbc'
         }
 
-        # Making the post request
-        response = requests.post(self.API_URL, data=data)
+        # Make the POST request
+        response = requests.post(self.API_URL, data=POSTBody)
 
         result = []
-
         responseDataFields = {'displayName': 'shopLocation', 'line1': 'shopLocationAdditional', 'stockPickup': 'availablePieces'}
 
         for data in response.json()['data']:
