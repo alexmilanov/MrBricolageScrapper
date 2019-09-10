@@ -65,7 +65,10 @@ class MrBricolageSpider(scrapy.Spider):
         responseDataFields = {'displayName': 'shopLocation', 'line1': 'shopLocationAdditional', 'stockPickup': 'availablePieces'}
 
         for data in response.json()['data']:
-            result.append({responseDataFields[k]: data[k] for k in responseDataFields})
+            result.append(
+                #It's needed to decode the HTML entities ex. &nbsp; in the stockPickup field
+                { responseDataFields[responseFieldName]: self.unescapeHTMLEntities(data[responseFieldName]) for responseFieldName in responseDataFields }
+            )
 
         return result
 
@@ -76,3 +79,6 @@ class MrBricolageSpider(scrapy.Spider):
             stringResult = re.sub(r"[\n\t.]", "", stringResult)
 
         return stringResult
+
+    def unescapeHTMLEntities(self, text = ''):
+        return HTMLParser.HTMLParser().unescape(text)
