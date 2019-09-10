@@ -1,6 +1,7 @@
 import scrapy
 import re
 import requests
+import HTMLParser
 
 class MrBricolageSpider(scrapy.Spider):
     name = 'MrBricolageBikeAccessories'
